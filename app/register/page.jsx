@@ -36,14 +36,25 @@ export default function Register() {
     formData.append("student_name", formValues.student_name);
     formData.append("degree_name", formValues.degree_name);
     formData.append("graduation_year", formValues.graduation_year);
-    formData.append("certificate_file", selectedFile);
+    formData.append("pdf_file", selectedFile);
+
+    // Log readable FormData entries before the request executes
+    console.log("Form data entries:");
+    for (const [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        console.log(key, value.name, value.type, value.size);
+      } else {
+        console.log(key, value);
+      }
+    }
 
     try {
       setIsSubmitting(true);
-      const response = await backend.post("/certificates/process/", formData);
+      // Use trailing slash if the backend requires the exact route and to avoid POST->GET redirects
+      const response = await backend.post("certificates/process/", formData);
       console.log("Registration response:", response.data);
       setStatusMessage(
-        response.data?.message || "Registration submitted successfully.",
+        response.data?.document_hash || "Registration submitted successfully.",
       );
       setFormValues({
         student_id: "",
@@ -53,11 +64,17 @@ export default function Register() {
       });
       setSelectedFile(null);
     } catch (error) {
+      console.error("Registration request failed:", error);
+      const responseData = error?.response?.data.error;
       const message =
-        error?.response?.data?.message ||
+        responseData?.message ||
+        responseData?.detail ||
+        (typeof responseData === "string" ? responseData : null) ||
         error?.message ||
         "Unable to submit registration.";
-      setErrorMessage(message);
+      setErrorMessage(
+        typeof message === "string" ? message : JSON.stringify(message),
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -180,18 +197,18 @@ export default function Register() {
         {(statusMessage || errorMessage) && (
           <div className="mt-4 rounded-md border px-4 py-3 text-sm">
             {statusMessage ? (
-              <p className="text-green-700">{statusMessage}</p>
+              <p className="text-green-700">Hash: {statusMessage}</p>
             ) : (
               <p className="text-red-700">{errorMessage}</p>
             )}
           </div>
         )}
-
+        {/* 
         <isSecureContext>
           <p className="text-gray-600 text-xs italic mt-4">
             Your information is secure with us.
           </p>
-        </isSecureContext>
+        </isSecureContext> */}
       </form>
     </div>
   );

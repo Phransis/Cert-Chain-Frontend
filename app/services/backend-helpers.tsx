@@ -1,11 +1,20 @@
 import axios from "axios";
 
-const baseURL = "https://cert-chain-backend.onrender.com";
-const bearerToken = process.env.BEARER_TOKEN;
+const baseURL =
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  "https://cert-chain-backend.onrender.com/api/";
+const bearerToken = process.env.NEXT_PUBLIC_BEARER_TOKEN || "";
+
+const defaultHeaders: Record<string, string> = {};
+if (bearerToken) {
+  defaultHeaders.Authorization = `Bearer ${bearerToken}`;
+}
 
 export const backend = axios.create({
   baseURL,
-  headers: {
-    Authorization: `Bearer ${bearerToken}`
-  }
+  headers: defaultHeaders,
 });
+
+export const params = {
+  headers: defaultHeaders,
+};
