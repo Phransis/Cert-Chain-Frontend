@@ -1,5 +1,11 @@
 import axios from "axios";
 
+const baseURL = "https://cert-chain-backend.onrender.com";
+const bearerToken = process.env.BEARER_TOKEN;
+
 export const backend = axios.create({
-  baseURL: process.env.PUBLIC_BACKEND_URL
+  baseURL,
+  headers: {
+    Authorization: `Bearer ${bearerToken}`
+  }
 });
