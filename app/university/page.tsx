@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Card from "../components/Card";
 import FileUploadDropZone from "../components/FileUploadDropZone";
 import AnalyticsCard from "../components/AnalyticsCard";
 import TransactionsTable from "../components/TransactionsTable";
 import IssueCertificate from "../components/IssueCertificate";
+import { WalletContext } from "../components/WalletProvider";
 
 const analytics = [
   {
@@ -40,6 +41,8 @@ export default function UniversityPortal() {
   );
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
+  const { connected } = useContext(WalletContext);
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-white to-zinc-50">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
@@ -53,26 +56,25 @@ export default function UniversityPortal() {
           </p>
         </div>
 
-        {/* Authentication Section */}
-        <div className="mb-12 rounded-lg border border-[var(--button-bg)] bg-[var(--foreground)] p-6">
-          <div className="flex items-start gap-4">
-            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[var(--button-bg)] text-white font-bold">
-              🔐
-            </div>
-            <div>
-              <h3 className="font-semibold text-zinc-900 ">
-                Wallet Connection Required
-              </h3>
-              <p className="mt-1 text-sm text-zinc-600">
-                Connect your Stellar wallet to authenticate as an authorized
-                university issuer.
-              </p>
-              {/* <button className="mt-3 rounded-lg bg-[var(--button-bg)] px-6 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-[var(--button-bg-hover)] cursor-pointer">
-                Connect Wallet
-              </button> */}
+        {/* Authentication Section (hidden when wallet connected) */}
+        {!connected && (
+          <div className="mb-12 rounded-lg border border-[var(--button-bg)] bg-[var(--foreground)] p-6">
+            <div className="flex items-start gap-4">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[var(--button-bg)] text-white font-bold">
+                🔐
+              </div>
+              <div>
+                <h3 className="font-semibold text-zinc-900 ">
+                  Wallet Connection Required
+                </h3>
+                <p className="mt-1 text-sm text-zinc-600">
+                  Connect your Stellar wallet to authenticate as an authorized
+                  university issuer.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Tabs */}
         <div className="mb-8 flex gap-2 border-b border-zinc-200">
@@ -109,7 +111,9 @@ export default function UniversityPortal() {
         </div>
 
         {/* Issue Single Certificate */}
-        {activeTab === "issue" && <IssueCertificate onFileSelect={(file) => setUploadedFile(file)} />}
+        {activeTab === "issue" && (
+          <IssueCertificate onFileSelect={(file) => setUploadedFile(file)} />
+        )}
 
         {/* Batch Upload */}
         {activeTab === "batch" && (

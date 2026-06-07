@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
+import WalletProvider from "./components/WalletProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -25,9 +26,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="flex min-h-full flex-col bg-[var(--foreground)] text-zinc-900">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <WalletProvider>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </WalletProvider>
       </body>
     </html>
   );

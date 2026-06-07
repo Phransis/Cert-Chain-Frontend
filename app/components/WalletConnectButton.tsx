@@ -1,36 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
-
-import {
-  connectFreighter,
-  retrievePublicKey,
-  shortenPublicKey,
-} from "../services/stellar-helpers";
+import React, { useContext, useState } from "react";
+import { WalletContext } from "./WalletProvider";
 
 export default function WalletConnectButton() {
-  const [walletAddress, setWalletAddress] = useState("Connect Wallet");
-  const [walletConnected, setWalletConnected] = useState(false);
+  const { address, connected, connect } = useContext(WalletContext);
   const [loading, setLoading] = useState(false);
 
   const handleConnect = async () => {
+    if (connected) return;
     try {
       setLoading(true);
-
-      const connected = await connectFreighter();
-
-      if (!connected) {
-        return;
-      }
-
-      const publicKey = await retrievePublicKey();
-
-      setWalletAddress(shortenPublicKey(publicKey));
-      setWalletConnected(true);
-
-      console.log("Wallet Connected:", publicKey);
-    } catch (error) {
-      console.error("Connection failed:", error);
+      await connect();
+    } catch (err) {
+      console.error(err);
       alert("Failed to connect wallet");
     } finally {
       setLoading(false);
@@ -45,8 +28,8 @@ export default function WalletConnectButton() {
     >
       {loading
         ? "Connecting..."
-        : walletConnected
-          ? walletAddress
+        : connected && address
+          ? address
           : "Connect Wallet"}
     </button>
   );
