@@ -6,7 +6,7 @@ export default function Navbar() {
       <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-orange-600">
+            <span className="text-2xl font-bold text-[var(--button-bg)]">
               CertChain
             </span>
             {/* <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
@@ -18,25 +18,25 @@ export default function Navbar() {
             <div className="hidden sm:flex items-center gap-6">
               <Link
                 href="/"
-                className="text-sm font-medium text-zinc-700 transition hover:text-orange-600"
+                className="text-sm font-medium text-zinc-700 transition hover:text-[var(--button-bg)]"
               >
                 Home
               </Link>
               <Link
                 href="/university"
-                className="text-sm font-medium text-zinc-700 transition hover:text-orange-600"
+                className="text-sm font-medium text-zinc-700 transition hover:text-[var(--button-bg)]"
               >
                 University
               </Link>
               <Link
                 href="/employer"
-                className="text-sm font-medium text-zinc-700 transition hover:text-orange-600"
+                className="text-sm font-medium text-zinc-700 transition hover:text-[var(--button-bg)]"
               >
                 Employer
               </Link>
             </div>
 
-            <button className="rounded-lg bg-[var(--button-bg)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--button-bg-hover)]">
+            <button className="rounded-lg bg-[var(--button-bg)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--button-bg-hover)] cursor-pointer">
               Connect Wallet
             </button>
           </div>

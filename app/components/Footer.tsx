@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4 mb-8">
           <div>
-            <h3 className="text-lg font-bold text-orange-600 mb-4">
+            <h3 className="text-lg font-bold text-[var(--button-bg)] mb-4">
               CertChain
             </h3>
             <p className="text-sm text-zinc-600">
@@ -21,7 +21,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/"
-                  className="text-zinc-600 transition hover:text-orange-600"
+                  className="text-zinc-600 transition hover:text-[var(--button-bg)]"
                 >
                   Home
                 </Link>
@@ -29,7 +29,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/university"
-                  className="text-zinc-600 transition hover:text-orange-600"
+                  className="text-zinc-600 transition hover:text-[var(--button-bg)]"
                 >
                   University Portal
                 </Link>
@@ -37,7 +37,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/employer"
-                  className="text-zinc-600 transition hover:text-orange-600"
+                  className="text-zinc-600 transition hover:text-[var(--button-bg)]"
                 >
                   Employer Portal
                 </Link>
@@ -51,7 +51,7 @@ export default function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-zinc-600 transition hover:text-orange-600"
+                  className="text-zinc-600 transition hover:text-[var(--button-bg)]"
                 >
                   Stellar Network
                 </a>
@@ -59,7 +59,7 @@ export default function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-zinc-600 transition hover:text-orange-600"
+                  className="text-zinc-600 transition hover:text-[var(--button-bg)]"
                 >
                   Soroban Contracts
                 </a>
@@ -67,7 +67,7 @@ export default function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-zinc-600 transition hover:text-orange-600"
+                  className="text-zinc-600 transition hover:text-[var(--button-bg)]"
                 >
                   SHA-256 Hashing
                 </a>
@@ -81,7 +81,7 @@ export default function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-zinc-600 transition hover:text-orange-600"
+                  className="text-zinc-600 transition hover:text-[var(--button-bg)]"
                 >
                   Privacy Policy
                 </a>
@@ -89,7 +89,7 @@ export default function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-zinc-600 transition hover:text-orange-600"
+                  className="text-zinc-600 transition hover:text-[var(--button-bg)]"
                 >
                   Terms of Service
                 </a>
@@ -97,7 +97,7 @@ export default function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-zinc-600 transition hover:text-orange-600"
+                  className="text-zinc-600 transition hover:text-[var(--button-bg)]"
                 >
                   Contact Us
                 </a>
