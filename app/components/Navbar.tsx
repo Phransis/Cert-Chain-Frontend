@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import React from "react";
 
 export default function Navbar() {
+  const [walletAddress, setWalletAddress] = React.useState("Connect Wallet");
+  const [walletConnected, setWalletConnected] = React.useState(false);
   return (
     <nav className="sticky top-0 z-50 border-b border-zinc-200 bg-white/95 backdrop-blur">
       <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6 lg:px-8">
@@ -37,7 +42,7 @@ export default function Navbar() {
             </div>
 
             <button className="rounded-lg bg-[var(--button-bg)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--button-bg-hover)] cursor-pointer">
-              Connect Wallet
+              {walletAddress}
             </button>
           </div>
         </div>
