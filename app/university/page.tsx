@@ -3,6 +3,35 @@
 import { useState } from "react";
 import Card from "../components/Card";
 import FileUploadDropZone from "../components/FileUploadDropZone";
+import AnalyticsCard from "../components/AnalyticsCard";
+import TransactionsTable from "../components/TransactionsTable";
+
+const analytics = [
+  {
+    title: "Total Issued",
+    description: "20390582",
+    tags: ["Issued"],
+    tagColor: "bg-green-100 text-green-700",
+  },
+  {
+    title: "Active",
+    description: "10456789",
+    tags: ["Active"],
+    tagColor: "bg-blue-100 text-blue-700",
+  },
+  {
+    title: "Pending",
+    description: "2578394",
+    tags: ["Pending"],
+    tagColor: "bg-yellow-100 text-yellow-700",
+  },
+  {
+    title: "Revoked",
+    description: "35890",
+    tags: ["Revoked"],
+    tagColor: "bg-red-100 text-red-700",
+  },
+];
 
 export default function UniversityPortal() {
   const [activeTab, setActiveTab] = useState<"issue" | "batch" | "dashboard">(
@@ -37,7 +66,7 @@ export default function UniversityPortal() {
                 Connect your Stellar wallet to authenticate as an authorized
                 university issuer.
               </p>
-              <button className="mt-3 rounded-lg bg-blue-600 px-6 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">
+              <button className="mt-3 rounded-lg bg-blue-600 px-6 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 cursor-pointer">
                 Connect Wallet
               </button>
             </div>
@@ -50,8 +79,8 @@ export default function UniversityPortal() {
             onClick={() => setActiveTab("dashboard")}
             className={`px-6 py-3 font-medium transition ${
               activeTab === "dashboard"
-                ? "border-b-2 border-orange-600 text-orange-600"
-                : "text-zinc-600 hover:text-zinc-900"
+                ? "border-b-2 border-[var(--button-bg)] text-[var(--button-bg)]"
+                : "text-zinc-600 hover:text-[var(--button-bg)]"
             }`}
           >
             Dashboard
@@ -60,8 +89,8 @@ export default function UniversityPortal() {
             onClick={() => setActiveTab("issue")}
             className={`px-6 py-3 font-medium transition ${
               activeTab === "issue"
-                ? "border-b-2 border-orange-600 text-orange-600"
-                : "text-zinc-600 hover:text-zinc-900"
+                ? "border-b-2 border-[var(--button-bg)] text-[var(--button-bg)]"
+                : "text-zinc-600 hover:text-[var(--button-bg)]"
             }`}
           >
             Issue Certificate
@@ -70,8 +99,8 @@ export default function UniversityPortal() {
             onClick={() => setActiveTab("batch")}
             className={`px-6 py-3 font-medium transition ${
               activeTab === "batch"
-                ? "border-b-2 border-orange-600 text-orange-600"
-                : "text-zinc-600 hover:text-zinc-900"
+                ? "border-b-2 border-[var(--button-bg)] text-[var(--button-bg)]"
+                : "text-zinc-600 hover:text-[var(--button-bg)]"
             }`}
           >
             Batch Upload
@@ -119,7 +148,7 @@ export default function UniversityPortal() {
                   </select>
                 </div>
 
-                <button className="w-full rounded-lg bg-orange-600 px-4 py-3 font-semibold text-white transition hover:bg-orange-700">
+                <button className="w-full rounded-lg bg-[var(--button-bg)] px-4 py-3 font-semibold text-white transition hover:bg-[var(--button-bg-hover)] cursor-pointer">
                   Generate & Sign Transaction
                 </button>
               </div>
@@ -209,7 +238,7 @@ export default function UniversityPortal() {
                     <p className="font-medium text-green-900">✓ File ready</p>
                     <p className="text-green-700">{uploadedFile.name}</p>
                   </div>
-                  <button className="w-full rounded-lg bg-orange-600 px-4 py-3 font-semibold text-white transition hover:bg-orange-700">
+                  <button className="w-full rounded-lg bg-[var(--button-bg)] px-4 py-3 font-semibold text-white transition hover:bg-[var(--button-bg-hover)] cursor-pointer">
                     Process Batch Upload
                   </button>
                 </div>
@@ -222,83 +251,19 @@ export default function UniversityPortal() {
         {activeTab === "dashboard" && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-              <Card
-                title="Total Issued"
-                description="156 "
-                tags={["Issued"]}
-              />
-              <Card
-                title="Pending"
-                description="3 "
-                tags={["Pending"]}
-              />
-              <Card
-                title="Revoked"
-                description="2 "
-                tags={["Revoked"]}
-              />
-              <Card
-                title="Active"
-                description="151 "
-                tags={["Active"]}
-              />
+              {analytics.map((item) => (
+                <AnalyticsCard
+                  key={item.title}
+                  title={item.title}
+                  description={item.description}
+                  tags={item.tags}
+                  tagColor={item.tagColor}
+                  href={`/university/${item.title.toLowerCase().replace(/\s+/g, "-")}`}
+                />
+              ))}
             </div>
 
-            <div className="rounded-lg border border-zinc-200 bg-white p-6">
-              <h3 className="mb-4 font-semibold text-zinc-900">
-                Recent Transactions
-              </h3>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead>
-                    <tr className="border-b border-zinc-200">
-                      <th className="px-4 py-3 font-semibold">Student ID</th>
-                      <th className="px-4 py-3 font-semibold">Degree</th>
-                      <th className="px-4 py-3 font-semibold">Status</th>
-                      <th className="px-4 py-3 font-semibold">Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b border-zinc-100">
-                      <td className="px-4 py-3 font-mono text-zinc-700">
-                        STU-2024-001234
-                      </td>
-                      <td className="px-4 py-3">Bachelor of Science</td>
-                      <td className="px-4 py-3">
-                        <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-                          Active
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-zinc-600">2024-06-01</td>
-                    </tr>
-                    <tr className="border-b border-zinc-100">
-                      <td className="px-4 py-3 font-mono text-zinc-700">
-                        STU-2024-001235
-                      </td>
-                      <td className="px-4 py-3">Master of Arts</td>
-                      <td className="px-4 py-3">
-                        <span className="inline-flex items-center rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700">
-                          Pending
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-zinc-600">2024-06-02</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-3 font-mono text-zinc-700">
-                        STU-2024-001236
-                      </td>
-                      <td className="px-4 py-3">Bachelor of Arts</td>
-                      <td className="px-4 py-3">
-                        <span className="inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
-                          Revoked
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-zinc-600">2024-05-15</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <TransactionsTable itemsPerPage={5} title="Recent Transactions" />
           </div>
         )}
       </div>
