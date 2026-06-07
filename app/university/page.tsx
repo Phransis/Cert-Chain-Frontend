@@ -5,6 +5,7 @@ import Card from "../components/Card";
 import FileUploadDropZone from "../components/FileUploadDropZone";
 import AnalyticsCard from "../components/AnalyticsCard";
 import TransactionsTable from "../components/TransactionsTable";
+import IssueCertificate from "../components/IssueCertificate";
 
 const analytics = [
   {
@@ -108,71 +109,7 @@ export default function UniversityPortal() {
         </div>
 
         {/* Issue Single Certificate */}
-        {activeTab === "issue" && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {/* Form */}
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-semibold text-zinc-900 mb-2">
-                    Student ID
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g., STU-2024-001234"
-                    className="w-full rounded-lg border border-zinc-300 px-4 py-2 placeholder-zinc-400 focus:border-orange-500 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-zinc-900 mb-2">
-                    Graduation Year
-                  </label>
-                  <input
-                    type="number"
-                    placeholder="e.g., 2024"
-                    className="w-full rounded-lg border border-zinc-300 px-4 py-2 placeholder-zinc-400 focus:border-orange-500 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-zinc-900 mb-2">
-                    Degree Type
-                  </label>
-                  <select className="w-full rounded-lg border border-zinc-300 px-4 py-2 focus:border-orange-500 focus:outline-none">
-                    <option>Bachelor of Science</option>
-                    <option>Bachelor of Arts</option>
-                    <option>Master of Science</option>
-                    <option>Master of Arts</option>
-                    <option>PhD</option>
-                  </select>
-                </div>
-
-                <button className="w-full rounded-lg bg-[var(--button-bg)] px-4 py-3 font-semibold text-white transition hover:bg-[var(--button-bg-hover)] cursor-pointer">
-                  Generate & Sign Transaction
-                </button>
-              </div>
-
-              {/* File Upload */}
-              <div className="space-y-4">
-                <label className="block text-sm font-semibold text-zinc-900">
-                  Upload Certificate (PDF)
-                </label>
-                <FileUploadDropZone
-                  onFileSelect={(file) => setUploadedFile(file)}
-                  accepts=".pdf"
-                  label="Upload Certificate"
-                />
-                {uploadedFile && (
-                  <div className="rounded-lg bg-green-50 p-4 text-sm">
-                    <p className="font-medium text-green-900">✓ File ready</p>
-                    <p className="text-green-700">{uploadedFile.name}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
+        {activeTab === "issue" && <IssueCertificate onFileSelect={(file) => setUploadedFile(file)} />}
 
         {/* Batch Upload */}
         {activeTab === "batch" && (
