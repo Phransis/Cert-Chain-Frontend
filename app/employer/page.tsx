@@ -61,7 +61,7 @@ export default function EmployerPortal() {
         </div>
 
         {/* Information Card */}
-        <div className="mb-12 rounded-lg border border-green-200 bg-green-50 p-6">
+        <div className="mb-12 rounded-lg border border-green-200 bg-[var(--foreground)] p-6">
           <h3 className="mb-2 font-semibold text-green-900">How It Works</h3>
           <ol className="space-y-2 text-sm text-green-800">
             <li>

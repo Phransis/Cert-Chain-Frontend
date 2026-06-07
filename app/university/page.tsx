@@ -1,7 +1,6 @@
 "use client";
 
 import { useContext, useState } from "react";
-import Card from "../components/Card";
 import FileUploadDropZone from "../components/FileUploadDropZone";
 import AnalyticsCard from "../components/AnalyticsCard";
 import TransactionsTable from "../components/TransactionsTable";
