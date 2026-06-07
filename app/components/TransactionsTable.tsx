@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
+import { backend } from "@/app/services/backend-helpers";
 
 type Transaction = {
   studentId: string;
   degree: string;
+  studentName: string;
   status: "Active" | "Pending" | "Revoked";
   date: string;
 };
@@ -12,70 +14,8 @@ type Transaction = {
 type TransactionsTableProps = {
   itemsPerPage?: number;
   title?: string;
+  apiPath?: string;
 };
-
-const mockTransactions: Transaction[] = [
-  {
-    studentId: "STU-2024-001234",
-    degree: "Bachelor of Science",
-    status: "Active",
-    date: "2024-06-01",
-  },
-  {
-    studentId: "STU-2024-001235",
-    degree: "Master of Arts",
-    status: "Pending",
-    date: "2024-06-02",
-  },
-  {
-    studentId: "STU-2024-001236",
-    degree: "Bachelor of Arts",
-    status: "Revoked",
-    date: "2024-05-15",
-  },
-  {
-    studentId: "STU-2024-001237",
-    degree: "Master of Science",
-    status: "Active",
-    date: "2024-06-03",
-  },
-  {
-    studentId: "STU-2024-001238",
-    degree: "PhD in Computer Science",
-    status: "Active",
-    date: "2024-06-04",
-  },
-  {
-    studentId: "STU-2024-001239",
-    degree: "Bachelor of Engineering",
-    status: "Pending",
-    date: "2024-06-05",
-  },
-  {
-    studentId: "STU-2024-001240",
-    degree: "Master of Business Administration",
-    status: "Active",
-    date: "2024-06-06",
-  },
-  {
-    studentId: "STU-2024-001241",
-    degree: "Bachelor of Science",
-    status: "Revoked",
-    date: "2024-05-20",
-  },
-  {
-    studentId: "STU-2024-001242",
-    degree: "Bachelor of Arts",
-    status: "Active",
-    date: "2024-06-07",
-  },
-  {
-    studentId: "STU-2024-001243",
-    degree: "Master of Arts",
-    status: "Pending",
-    date: "2024-06-08",
-  },
-];
 
 const getStatusStyles = (status: Transaction["status"]) => {
   const styles = {
@@ -92,14 +32,78 @@ const getStatusStyles = (status: Transaction["status"]) => {
 export default function TransactionsTable({
   itemsPerPage: initialItemsPerPage = 5,
   title = "Recent Transactions",
+  apiPath = "certificates",
 }: TransactionsTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const totalPages = Math.ceil(mockTransactions.length / itemsPerPage);
+  const normalizeTransaction = (item: any): Transaction => {
+    const status =
+      item.status === "Active" ||
+      item.status === "Pending" ||
+      item.status === "Revoked"
+        ? item.status
+        : "Pending";
+
+    return {
+      studentId: item.student_id || item.studentId || item.id || "",
+      studentName: item.student_name || item.name || "",
+      degree: item.degree || item.degree_type || item.degree_name || "",
+      status,
+      date: item.date || item.created_at || item.timestamp || "",
+    };
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchTransactions = async () => {
+      try {
+        setLoading(true);
+        setErrorMessage("");
+
+        const response = await backend.get(apiPath);
+        const payload = response.data;
+
+        const items = Array.isArray(payload)
+          ? payload
+          : Array.isArray(payload.results)
+            ? payload.results
+            : payload.data || [];
+
+        if (!isMounted) return;
+
+        if (!Array.isArray(items) || items.length === 0) {
+          setTransactions([]);
+          return;
+        }
+
+        setTransactions(items.map(normalizeTransaction));
+        setCurrentPage(1);
+      } catch (error) {
+        console.error("Transactions fetch failed:", error);
+        if (!isMounted) return;
+        setErrorMessage("Unable to load transactions from the API.");
+      } finally {
+        if (!isMounted) return;
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [apiPath]);
+
+  const totalPages = Math.max(1, Math.ceil(transactions.length / itemsPerPage));
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentTransactions = mockTransactions.slice(startIndex, endIndex);
+  const currentTransactions = transactions.slice(startIndex, endIndex);
 
   const handlePrevious = () => {
     setCurrentPage((prev) => Math.max(1, prev - 1));
@@ -109,10 +113,10 @@ export default function TransactionsTable({
     setCurrentPage((prev) => Math.min(totalPages, prev + 1));
   };
 
-  const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleItemsPerPageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = Math.max(
       1,
-      Math.min(mockTransactions.length, Number(e.target.value) || 1),
+      Math.min(transactions.length, Number(e.target.value) || 1),
     );
     setItemsPerPage(value);
     setCurrentPage(1);
@@ -120,7 +124,7 @@ export default function TransactionsTable({
 
   return (
     <div className="rounded-lg border border-zinc-200 bg-white p-6">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="font-semibold text-zinc-900">{title}</h3>
         <div className="flex items-center gap-2">
           <label htmlFor="items-per-page" className="text-sm text-zinc-600">
@@ -130,41 +134,66 @@ export default function TransactionsTable({
             id="items-per-page"
             type="number"
             min="1"
-            max={mockTransactions.length}
+            max={transactions.length}
             value={itemsPerPage}
             onChange={handleItemsPerPageChange}
             className="w-16 rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
           />
         </div>
       </div>
+      {loading && (
+        <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+          Loading transactions...
+        </div>
+      )}
+      {errorMessage && (
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {errorMessage}
+        </div>
+      )}
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-zinc-200">
               <th className="px-4 py-3 font-semibold">Student ID</th>
+              <th className="px-4 py-3 font-semibold">Student Name</th>
               <th className="px-4 py-3 font-semibold">Degree</th>
               <th className="px-4 py-3 font-semibold">Status</th>
               <th className="px-4 py-3 font-semibold">Date</th>
             </tr>
           </thead>
           <tbody>
-            {currentTransactions.map((transaction, index) => (
-              <tr
-                key={`${transaction.studentId}-${index}`}
-                className="border-b border-zinc-100"
-              >
-                <td className="px-4 py-3 font-mono text-zinc-700">
-                  {transaction.studentId}
+            {currentTransactions.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={4}
+                  className="px-4 py-6 text-center text-sm text-zinc-500"
+                >
+                  No transactions available.
                 </td>
-                <td className="px-4 py-3">{transaction.degree}</td>
-                <td className="px-4 py-3">
-                  <span className={getStatusStyles(transaction.status)}>
-                    {transaction.status}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-zinc-600">{transaction.date}</td>
               </tr>
-            ))}
+            ) : (
+              currentTransactions.map((transaction, index) => (
+                <tr
+                  key={`${transaction.studentId}-${index}`}
+                  className="border-b border-zinc-100"
+                >
+                  <td className="px-4 py-3 font-mono text-zinc-700">
+                    {transaction.studentId}
+                  </td>
+                  <td className="px-4 py-3">{transaction.studentName}</td>
+                  <td className="px-4 py-3">{transaction.degree}</td>
+                  <td className="px-4 py-3">
+                    <span className={getStatusStyles(transaction.status)}>
+                      {transaction.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-zinc-600">
+                    {transaction.date}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -172,7 +201,7 @@ export default function TransactionsTable({
       {/* Pagination Controls */}
       <div className="mt-6 flex items-center justify-between">
         <div className="text-sm text-zinc-600">
-          Page {currentPage} of {totalPages} ({mockTransactions.length} total
+          Page {currentPage} of {totalPages} ({transactions.length} total
           records)
         </div>
         <div className="flex gap-2">
