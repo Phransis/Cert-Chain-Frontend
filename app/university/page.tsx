@@ -54,22 +54,22 @@ export default function UniversityPortal() {
         </div>
 
         {/* Authentication Section */}
-        <div className="mb-12 rounded-lg border border-blue-200 bg-blue-50 p-6">
+        <div className="mb-12 rounded-lg border border-[var(--button-bg)] bg-[var(--foreground)] p-6">
           <div className="flex items-start gap-4">
-            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-200 text-blue-700 font-bold">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[var(--button-bg)] text-white font-bold">
               🔐
             </div>
             <div>
-              <h3 className="font-semibold text-blue-900">
+              <h3 className="font-semibold text-zinc-900 ">
                 Wallet Connection Required
               </h3>
-              <p className="mt-1 text-sm text-blue-800">
+              <p className="mt-1 text-sm text-zinc-600">
                 Connect your Stellar wallet to authenticate as an authorized
                 university issuer.
               </p>
-              <button className="mt-3 rounded-lg bg-blue-600 px-6 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 cursor-pointer">
+              {/* <button className="mt-3 rounded-lg bg-[var(--button-bg)] px-6 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-[var(--button-bg-hover)] cursor-pointer">
                 Connect Wallet
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

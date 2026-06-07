@@ -121,7 +121,7 @@ export default function IssueCertificate({
             </label>
             <input
               type="text"
-              placeholder="e.g., STU-2024-001234"
+              placeholder="Enter Student ID (e.g., STU-2024-001234)"
               value={studentIdInput}
               onChange={(e) => {
                 setStudentIdInput(e.target.value);
