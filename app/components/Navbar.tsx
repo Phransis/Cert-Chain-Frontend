@@ -37,6 +37,18 @@ export default function Navbar() {
               >
                 Employer
               </Link>
+              <Link
+                href="/verify"
+                className="text-sm font-medium text-zinc-700 transition hover:text-[var(--button-bg)]"
+              >
+                Verify
+              </Link>
+              <Link
+                href="/register"
+                className="text-sm font-medium text-zinc-700 transition hover:text-[var(--button-bg)]"
+              >
+                Register
+              </Link>
             </div>
 
             <WalletConnectButton />

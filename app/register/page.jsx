@@ -3,6 +3,7 @@
 import { useState } from "react";
 import FileUploadDropZone from "@/app/components/FileUploadDropZone";
 import { backend } from "@/app/services/backend-helpers";
+import { sendHashToSmartContract } from "@/app/services/soroban-helpers";
 
 export default function Register() {
   const [formValues, setFormValues] = useState({
@@ -15,6 +16,8 @@ export default function Register() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [saveStatus, setSaveStatus] = useState("");
+  const [saveMessage, setSaveMessage] = useState("");
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -50,12 +53,39 @@ export default function Register() {
 
     try {
       setIsSubmitting(true);
+      setSaveStatus("");
+      setSaveMessage("");
       // Use trailing slash if the backend requires the exact route and to avoid POST->GET redirects
       const response = await backend.post("certificates/process/", formData);
       console.log("Registration response:", response.data);
-      setStatusMessage(
-        response.data?.document_hash || "Registration submitted successfully.",
-      );
+      const documentHash = response.data?.document_hash;
+      setStatusMessage(documentHash || "Registration submitted successfully.");
+
+      if (documentHash) {
+        try {
+          setSaveStatus("saving");
+          setSaveMessage(
+            "Sending hash to the smart contract for safekeeping...",
+          );
+          await sendHashToSmartContract(documentHash);
+          setSaveStatus("saved");
+          setSaveMessage("Hash saved to the smart contract successfully.");
+        } catch (saveError) {
+          console.error("Safekeeping transaction failed:", saveError);
+          const responseData = saveError?.response?.data?.error;
+          const message =
+            responseData?.message ||
+            responseData?.detail ||
+            (typeof responseData === "string" ? responseData : null) ||
+            saveError?.message ||
+            "Unable to send hash to the smart contract.";
+          setSaveStatus("failed");
+          setSaveMessage(
+            typeof message === "string" ? message : JSON.stringify(message),
+          );
+        }
+      }
+
       setFormValues({
         student_id: "",
         student_name: "",
@@ -194,13 +224,33 @@ export default function Register() {
           </button>
         </div>
 
-        {(statusMessage || errorMessage) && (
-          <div className="mt-4 rounded-md border px-4 py-3 text-sm">
+        {(statusMessage || errorMessage || saveStatus) && (
+          <div className="mt-4 space-y-3 text-sm">
             {statusMessage ? (
-              <p className="text-green-700">Hash: {statusMessage}</p>
-            ) : (
-              <p className="text-red-700">{errorMessage}</p>
-            )}
+              <div className="rounded-md border border-green-200 bg-green-50 px-4 py-3 text-green-700">
+                Hash: {statusMessage}
+              </div>
+            ) : null}
+
+            {errorMessage ? (
+              <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+                {errorMessage}
+              </div>
+            ) : null}
+
+            {saveStatus ? (
+              <div
+                className={`rounded-md border px-4 py-3 ${
+                  saveStatus === "saved"
+                    ? "border-green-200 bg-green-50 text-green-700"
+                    : saveStatus === "saving"
+                      ? "border-blue-200 bg-blue-50 text-blue-700"
+                      : "border-red-200 bg-red-50 text-red-700"
+                }`}
+              >
+                {saveMessage}
+              </div>
+            ) : null}
           </div>
         )}
         {/* 
