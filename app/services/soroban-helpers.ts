@@ -53,6 +53,15 @@ export async function sendHashToSmartContract(hash: string) {
     throw new Error("Unable to retrieve wallet address from Freighter.");
   }
 
+  console.log("Using wallet address:", address);
+
+  const storeAddress = (await getAddress()).address;
+  if (!storeAddress) {
+    throw new Error("Failed to retrieve wallet address.");
+  }
+
+  sessionStorage.setItem("walletAddress", storeAddress);
+
   const server = new Server(RPC_URL, {
     allowHttp: RPC_URL.startsWith("http://"),
   });
@@ -90,5 +99,6 @@ export async function sendHashToSmartContract(hash: string) {
   const result = await server.sendTransaction(
     TransactionBuilder.fromXDR(signedXdr, NETWORK_PASSPHRASE),
   );
+  console.log("Transaction sent with hash:", result.hash);
   return result.hash;
 }

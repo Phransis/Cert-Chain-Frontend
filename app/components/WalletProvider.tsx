@@ -36,6 +36,8 @@ export default function WalletProvider({
       const pk = await retrievePublicKey();
       setAddress(shortenPublicKey(pk));
       setConnected(true);
+      sessionStorage.setItem("walletAddress", pk);
+      console.log("Wallet connected:", pk);
     } catch (err) {
       console.error("Wallet connect failed", err);
     }
@@ -44,6 +46,8 @@ export default function WalletProvider({
   const disconnect = useCallback(() => {
     setAddress(null);
     setConnected(false);
+    sessionStorage.removeItem("walletAddress");
+    console.log("Wallet disconnected");
   }, []);
 
   return (

@@ -11,6 +11,7 @@ export default function Register() {
     student_name: "",
     degree_name: "",
     graduation_year: "",
+    wallet_address: "",
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,6 +41,7 @@ export default function Register() {
     formData.append("degree_name", formValues.degree_name);
     formData.append("graduation_year", formValues.graduation_year);
     formData.append("pdf_file", selectedFile);
+    formData.append("wallet_address", sessionStorage.getItem("walletAddress") || "");
 
     // Log readable FormData entries before the request executes
     console.log("Form data entries:");
@@ -91,6 +93,7 @@ export default function Register() {
         student_name: "",
         degree_name: "",
         graduation_year: "",
+        wallet_address: "",
       });
       setSelectedFile(null);
     } catch (error) {

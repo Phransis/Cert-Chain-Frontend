@@ -10,6 +10,7 @@ type Student = {
   degreeType: string;
   email: string;
   department: string;
+  walletAddress?: string;
 };
 
 type IssueCertificateProps = {
@@ -24,6 +25,7 @@ const mockStudents: Student[] = [
     degreeType: "Bachelor of Science",
     email: "alice.johnson@university.edu",
     department: "Computer Science",
+    walletAddress: "0x1234567890123456789012345678901234567890",
   },
   {
     studentId: "STU-2024-001235",
@@ -32,6 +34,7 @@ const mockStudents: Student[] = [
     degreeType: "Master of Arts",
     email: "bob.smith@university.edu",
     department: "English Literature",
+    walletAddress: "0x0987654321098765432109876543210987654321",
   },
   {
     studentId: "STU-2024-001236",
@@ -40,6 +43,7 @@ const mockStudents: Student[] = [
     degreeType: "Bachelor of Arts",
     email: "carol.davis@university.edu",
     department: "History",
+    walletAddress: "0x1111111111111111111111111111111111111111",
   },
   {
     studentId: "STU-2024-001237",
@@ -48,6 +52,7 @@ const mockStudents: Student[] = [
     degreeType: "Master of Science",
     email: "david.wilson@university.edu",
     department: "Physics",
+    walletAddress: "0x2222222222222222222222222222222222222222",
   },
   {
     studentId: "STU-2024-001238",
@@ -56,6 +61,7 @@ const mockStudents: Student[] = [
     degreeType: "PhD in Computer Science",
     email: "emma.martinez@university.edu",
     department: "Computer Science",
+    walletAddress: "0x3333333333333333333333333333333333333333",
   },
   {
     studentId: "STU-2024-001239",
@@ -64,6 +70,7 @@ const mockStudents: Student[] = [
     degreeType: "Bachelor of Engineering",
     email: "frank.brown@university.edu",
     department: "Engineering",
+    walletAddress: "0x4444444444444444444444444444444444444444",
   },
   {
     studentId: "STU-2024-001240",
@@ -72,6 +79,7 @@ const mockStudents: Student[] = [
     degreeType: "Master of Business Administration",
     email: "grace.lee@university.edu",
     department: "Business",
+    walletAddress: "0x5555555555555555555555555555555555555555",
   },
   {
     studentId: "STU-2024-001241",
@@ -80,6 +88,7 @@ const mockStudents: Student[] = [
     degreeType: "Bachelor of Science",
     email: "henry.taylor@university.edu",
     department: "Biology",
+    walletAddress: "0x6666666666666666666666666666666666666666",
   },
 ];
 
@@ -195,17 +204,30 @@ export default function IssueCertificate({
 
           {/* Student Email */}
           {selectedStudent && (
-            <div>
-              <label className="block text-sm font-semibold text-zinc-900 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                value={selectedStudent.email}
-                readOnly
-                className="w-full rounded-lg border border-zinc-300 px-4 py-2 bg-zinc-50 placeholder-zinc-400 focus:outline-none cursor-not-allowed"
-              />
-            </div>
+            <>
+              <div>
+                <label className="block text-sm font-semibold text-zinc-900 mb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={selectedStudent.email}
+                  readOnly
+                  className="w-full rounded-lg border border-zinc-300 px-4 py-2 bg-zinc-50 placeholder-zinc-400 focus:outline-none cursor-not-allowed"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-zinc-900 mb-2">
+                  Wallet Address
+                </label>
+                <input
+                  type="text"
+                  value={selectedStudent.walletAddress || "No wallet address"}
+                  readOnly
+                  className="w-full rounded-lg border border-zinc-300 px-4 py-2 bg-zinc-50 placeholder-zinc-400 focus:outline-none cursor-not-allowed"
+                />
+              </div>
+            </>
           )}
 
           <button
@@ -255,6 +277,10 @@ export default function IssueCertificate({
                 <p>
                   <span className="font-medium">Graduation:</span>{" "}
                   {selectedStudent.graduationYear}
+                </p>
+                <p>
+                  <span className="font-medium">Address:</span>{" "}
+                  {selectedStudent.walletAddress || "N/A"}
                 </p>
               </div>
             </div>

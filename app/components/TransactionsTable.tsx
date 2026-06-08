@@ -7,6 +7,7 @@ type Transaction = {
   studentId: string;
   degree: string;
   studentName: string;
+  walletAddress?: string;
   status: "Active" | "Pending" | "Revoked";
   date: string;
 };
@@ -54,6 +55,7 @@ export default function TransactionsTable({
       degree: item.degree || item.degree_type || item.degree_name || "",
       status,
       date: item.date || item.created_at || item.timestamp || "",
+      walletAddress: item.wallet_address || item.walletAddress || "",
     };
   };
 
@@ -160,13 +162,14 @@ export default function TransactionsTable({
               <th className="px-4 py-3 font-semibold">Degree</th>
               <th className="px-4 py-3 font-semibold">Status</th>
               <th className="px-4 py-3 font-semibold">Date</th>
+              <th className="px-4 py-3 font-semibold">Wallet Address</th>
             </tr>
           </thead>
           <tbody>
             {currentTransactions.length === 0 ? (
               <tr>
                 <td
-                  colSpan={4}
+                  colSpan={6}
                   className="px-4 py-6 text-center text-sm text-zinc-500"
                 >
                   No transactions available.
@@ -190,6 +193,9 @@ export default function TransactionsTable({
                   </td>
                   <td className="px-4 py-3 text-zinc-600">
                     {transaction.date}
+                  </td>
+                  <td className="px-4 py-3 font-mono text-zinc-700">
+                    {transaction.walletAddress || "N/A"}
                   </td>
                 </tr>
               ))
