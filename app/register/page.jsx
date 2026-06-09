@@ -57,7 +57,7 @@ export default function Register() {
       setIsSubmitting(true);
       setSaveStatus("");
       setSaveMessage("");
-      // Use trailing slash if the backend requires the exact route and to avoid POST->GET redirects
+
       const response = await backend.post("certificates/process/", formData);
       console.log("Registration response:", response.data);
       const documentHash = response.data?.document_hash;

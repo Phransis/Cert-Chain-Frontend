@@ -192,7 +192,7 @@ export default function TransactionsTable({
                     </span>
                   </td>
                   <td className="px-4 py-3 text-zinc-600">
-                    {transaction.date}
+                    {new Date(transaction.date).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-3 font-mono text-zinc-700">
                     {transaction.walletAddress || "N/A"}

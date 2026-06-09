@@ -1,15 +1,16 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import FileUploadDropZone from "./FileUploadDropZone";
+import { backend } from "@/app/services/backend-helpers";
 
 type Student = {
-  studentId: string;
-  name: string;
-  graduationYear: number;
-  degreeType: string;
-  email: string;
-  department: string;
+  student_id: string;
+  student_name: string;
+  graduation_year: number;
+  degree_name: string;
+  status: string;
+  created_at: string;
   walletAddress?: string;
 };
 
@@ -19,78 +20,127 @@ type IssueCertificateProps = {
 
 const mockStudents: Student[] = [
   {
-    studentId: "STU-2024-001234",
-    name: "Alice Johnson",
-    graduationYear: 2024,
-    degreeType: "Bachelor of Science",
-    email: "alice.johnson@university.edu",
-    department: "Computer Science",
+    student_id: "STU-2024-001234",
+    student_name: "Alice Johnson",
+    graduation_year: 2024,
+    degree_name: "Bachelor of Science",
+    status: "Active",
+    created_at: "2023-10-01T00:00:00Z",
     walletAddress: "0x1234567890123456789012345678901234567890",
   },
   {
-    studentId: "STU-2024-001235",
-    name: "Bob Smith",
-    graduationYear: 2024,
-    degreeType: "Master of Arts",
-    email: "bob.smith@university.edu",
-    department: "English Literature",
+    student_id: "STU-2024-001235",
+    student_name: "Bob Smith",
+    graduation_year: 2024,
+    degree_name: "Master of Arts",
+    status: "Active",
+    created_at: "2023-10-01T00:00:00Z",
     walletAddress: "0x0987654321098765432109876543210987654321",
   },
   {
-    studentId: "STU-2024-001236",
-    name: "Carol Davis",
-    graduationYear: 2023,
-    degreeType: "Bachelor of Arts",
-    email: "carol.davis@university.edu",
-    department: "History",
-    walletAddress: "0x1111111111111111111111111111111111111111",
+    student_id: "STU-2024-001235",
+    student_name: "Bob Smith",
+    graduation_year: 2024,
+    degree_name: "Master of Arts",
+    status: "Active",
+    created_at: "2023-10-01T00:00:00Z",
+    walletAddress: "0x0987654321098765432109876543210987654321",
   },
   {
-    studentId: "STU-2024-001237",
-    name: "David Wilson",
-    graduationYear: 2024,
-    degreeType: "Master of Science",
-    email: "david.wilson@university.edu",
-    department: "Physics",
-    walletAddress: "0x2222222222222222222222222222222222222222",
+    student_id: "STU-2024-001236",
+    student_name: "Carol Davis",
+    graduation_year: 2023,
+    degree_name: "Bachelor of Arts",
+    status: "Active",
+    created_at: "2023-10-01T00:00:00Z",
+    walletAddress: "0x111111111111111111111111111111111111111１",
   },
   {
-    studentId: "STU-2024-001238",
-    name: "Emma Martinez",
-    graduationYear: 2024,
-    degreeType: "PhD in Computer Science",
-    email: "emma.martinez@university.edu",
-    department: "Computer Science",
-    walletAddress: "0x3333333333333333333333333333333333333333",
+    student_id: "STU-2024-001237",
+    student_name: "David Wilson",
+    graduation_year: 2024,
+    degree_name: "Master of Science",
+    status: "Active",
+    created_at: "2023-10-01T00:00:00Z",
+    walletAddress: "0x22222222222222222222222222222222222222２",
   },
   {
-    studentId: "STU-2024-001239",
-    name: "Frank Brown",
-    graduationYear: 2025,
-    degreeType: "Bachelor of Engineering",
-    email: "frank.brown@university.edu",
-    department: "Engineering",
-    walletAddress: "0x4444444444444444444444444444444444444444",
+    student_id: "STU-2024-001238",
+    student_name: "Emma Martinez",
+    graduation_year: 2024,
+    degree_name: "PhD in Computer Science",
+    status: "Active",
+    created_at: "2023-10-01T00:00:00Z",
+    walletAddress: "0x333333333333333333333333333333333333333３",
   },
   {
-    studentId: "STU-2024-001240",
-    name: "Grace Lee",
-    graduationYear: 2024,
-    degreeType: "Master of Business Administration",
-    email: "grace.lee@university.edu",
-    department: "Business",
-    walletAddress: "0x5555555555555555555555555555555555555555",
+    student_id: "STU-2024-001239",
+    student_name: "Frank Brown",
+    graduation_year: 2025,
+    degree_name: "Bachelor of Engineering",
+    status: "Active",
+    created_at: "2023-10-01T00:00:00Z",
+    walletAddress: "0x444444444444444444444444444444444444444４",
   },
   {
-    studentId: "STU-2024-001241",
-    name: "Henry Taylor",
-    graduationYear: 2023,
-    degreeType: "Bachelor of Science",
-    email: "henry.taylor@university.edu",
-    department: "Biology",
-    walletAddress: "0x6666666666666666666666666666666666666666",
+    student_id: "STU-2024-001240",
+    student_name: "Grace Lee",
+    graduation_year: 2024,
+    degree_name: "Master of Business Administration",
+    status: "Active",
+    created_at: "2023-10-01T00:00:00Z",
+    walletAddress: "0x555555555555555555555555555555555555555５",
+  },
+  {
+    student_id: "STU-2024-001241",
+    student_name: "Henry Taylor",
+    graduation_year: 2023,
+    degree_name: "Bachelor of Science",
+    status: "Active",
+    created_at: "2023-10-01T00:00:00Z",
+    walletAddress: "0x666666666666666666666666666666666666666６",
   },
 ];
+
+function normalizeStudent(item: any): Student | null {
+  if (!item) return null;
+
+  const studentId =
+    item.student_id ||
+    item.studentId ||
+    item.id ||
+    item.studentId?.toString?.() ||
+    "";
+  if (!studentId) return null;
+
+  return {
+    student_id: studentId,
+    student_name:
+      item.student_name ||
+      item.name ||
+      item.full_name ||
+      item.studentName ||
+      "Unknown Student",
+    graduation_year:
+      Number(item.graduation_year ?? item.graduationYear ?? item.year ?? 0) ||
+      0,
+    degree_name:
+      item.degree_name ||
+      item.degree ||
+      item.degreeName ||
+      item.degreeType ||
+      "Unknown Degree",
+    status: item.status || "",
+    created_at:
+      item.created_at ||
+      item.created ||
+      item.timestamp ||
+      new Date().toISOString() ||
+      "",
+    walletAddress:
+      item.wallet_address || item.walletAddress || item.wallet || "",
+  };
+}
 
 export default function IssueCertificate({
   onFileSelect,
@@ -99,17 +149,63 @@ export default function IssueCertificate({
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [students, setStudents] = useState<Student[]>(mockStudents);
+  const [isLoadingStudents, setIsLoadingStudents] = useState(false);
+  const [studentFetchError, setStudentFetchError] = useState("");
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      if (!studentIdInput.trim()) {
+        setStudents([]);
+        return;
+      }
+      setIsLoadingStudents(true);
+      setStudentFetchError("");
+
+      try {
+        const response = await backend.get(
+          `students/${studentIdInput}/certificates`,
+        );
+        const payload = response.data;
+        console.log("Fetched students:", payload);
+        const studentList: any[] = Array.isArray(payload)
+          ? payload
+          : Array.isArray(payload?.students)
+            ? payload.students
+            : [];
+
+        const normalizedStudents = studentList
+          .map(normalizeStudent)
+          .filter((item): item is Student => item !== null);
+
+        if (normalizedStudents.length > 0) {
+          setStudents(normalizedStudents);
+        }
+      } catch (error: any) {
+        console.error("Failed fetching students:", error);
+        setStudentFetchError(
+          error?.response?.data?.message ||
+            error?.message ||
+            "Unable to load student data.",
+        );
+      } finally {
+        setIsLoadingStudents(false);
+      }
+    };
+
+    fetchStudents();
+  }, [studentIdInput]);
 
   const filteredStudents = useMemo(() => {
     if (!studentIdInput.trim()) return [];
-    return mockStudents.filter((student) =>
-      student.studentId.toLowerCase().includes(studentIdInput.toLowerCase()),
+    return students.filter((student) =>
+      student.student_id.toLowerCase().includes(studentIdInput.toLowerCase()),
     );
-  }, [studentIdInput]);
+  }, [studentIdInput, students]);
 
   const handleSelectStudent = (student: Student) => {
     setSelectedStudent(student);
-    setStudentIdInput(student.studentId);
+    setStudentIdInput(student.student_id);
     setShowSuggestions(false);
   };
 
@@ -140,19 +236,29 @@ export default function IssueCertificate({
               className="w-full rounded-lg border border-zinc-300 px-4 py-2 placeholder-zinc-400 focus:border-orange-500 focus:outline-none"
             />
 
+            {isLoadingStudents ? (
+              <p className="mt-2 text-sm text-zinc-500">
+                Loading student data…
+              </p>
+            ) : studentFetchError ? (
+              <p className="mt-2 text-sm text-red-600">{studentFetchError}</p>
+            ) : null}
+
             {/* Autocomplete Dropdown */}
             {showSuggestions && filteredStudents.length > 0 && (
               <div className="absolute top-full left-0 right-0 z-10 mt-1 max-h-64 overflow-y-auto rounded-lg border border-zinc-200 bg-white shadow-lg">
                 {filteredStudents.map((student) => (
                   <button
-                    key={student.studentId}
+                    key={student.student_id}
                     onClick={() => handleSelectStudent(student)}
                     className="w-full border-b border-zinc-100 px-4 py-3 text-left transition hover:bg-zinc-50 last:border-0"
                   >
                     <div className="font-semibold text-zinc-900">
-                      {student.studentId}
+                      {student.student_id}
                     </div>
-                    <div className="text-sm text-zinc-600">{student.name}</div>
+                    <div className="text-sm text-zinc-600">
+                      {student.student_name}
+                    </div>
                   </button>
                 ))}
               </div>
@@ -167,7 +273,7 @@ export default function IssueCertificate({
             <input
               type="number"
               placeholder="e.g., 2024"
-              value={selectedStudent?.graduationYear || ""}
+              value={selectedStudent?.graduation_year || ""}
               readOnly
               className="w-full rounded-lg border border-zinc-300 px-4 py-2 bg-zinc-50 placeholder-zinc-400 focus:outline-none cursor-not-allowed"
             />
@@ -181,7 +287,7 @@ export default function IssueCertificate({
             <input
               type="text"
               placeholder="Select a student first"
-              value={selectedStudent?.degreeType || ""}
+              value={selectedStudent?.degree_name || ""}
               readOnly
               className="w-full rounded-lg border border-zinc-300 px-4 py-2 bg-zinc-50 placeholder-zinc-400 focus:outline-none cursor-not-allowed"
             />
@@ -191,11 +297,11 @@ export default function IssueCertificate({
           {selectedStudent && (
             <div>
               <label className="block text-sm font-semibold text-zinc-900 mb-2">
-                Department
+                Status
               </label>
               <input
                 type="text"
-                value={selectedStudent.department}
+                value={selectedStudent.status || "N/A"}
                 readOnly
                 className="w-full rounded-lg border border-zinc-300 px-4 py-2 bg-zinc-50 placeholder-zinc-400 focus:outline-none cursor-not-allowed"
               />
@@ -207,11 +313,11 @@ export default function IssueCertificate({
             <>
               <div>
                 <label className="block text-sm font-semibold text-zinc-900 mb-2">
-                  Email
+                  Degree Name
                 </label>
                 <input
-                  type="email"
-                  value={selectedStudent.email}
+                  type="text"
+                  value={selectedStudent.degree_name}
                   readOnly
                   className="w-full rounded-lg border border-zinc-300 px-4 py-2 bg-zinc-50 placeholder-zinc-400 focus:outline-none cursor-not-allowed"
                 />
@@ -264,19 +370,19 @@ export default function IssueCertificate({
               <div className="space-y-1 text-sm text-blue-800">
                 <p>
                   <span className="font-medium">Name:</span>{" "}
-                  {selectedStudent.name}
+                  {selectedStudent.student_name}
                 </p>
                 <p>
                   <span className="font-medium">ID:</span>{" "}
-                  {selectedStudent.studentId}
+                  {selectedStudent.student_id}
                 </p>
                 <p>
                   <span className="font-medium">Degree:</span>{" "}
-                  {selectedStudent.degreeType}
+                  {selectedStudent.degree_name}
                 </p>
                 <p>
                   <span className="font-medium">Graduation:</span>{" "}
-                  {selectedStudent.graduationYear}
+                  {selectedStudent.graduation_year}
                 </p>
                 <p>
                   <span className="font-medium">Address:</span>{" "}
