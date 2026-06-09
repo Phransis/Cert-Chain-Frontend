@@ -4,11 +4,15 @@ import React, { useContext, useState } from "react";
 import { WalletContext } from "./WalletProvider";
 
 export default function WalletConnectButton() {
-  const { address, connected, connect } = useContext(WalletContext);
+  const { address, connected, connect, disconnect } = useContext(WalletContext);
   const [loading, setLoading] = useState(false);
 
-  const handleConnect = async () => {
-    if (connected) return;
+  const handleButtonClick = async () => {
+    if (connected) {
+      disconnect();
+      return;
+    }
+
     try {
       setLoading(true);
       await connect();
@@ -20,17 +24,19 @@ export default function WalletConnectButton() {
     }
   };
 
+  const buttonText = loading
+    ? "Connecting..."
+    : connected && address
+      ? `Disconnect (${address})`
+      : "Connect Wallet";
+
   return (
     <button
-      onClick={handleConnect}
+      onClick={handleButtonClick}
       disabled={loading}
       className="cursor-pointer rounded-lg bg-[var(--button-bg)] px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-[var(--button-bg-hover)] disabled:opacity-50"
     >
-      {loading
-        ? "Connecting..."
-        : connected && address
-          ? address
-          : "Connect Wallet"}
+      {buttonText}
     </button>
   );
 }

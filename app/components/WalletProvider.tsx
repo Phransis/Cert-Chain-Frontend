@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useCallback, useState } from "react";
+import React, { createContext, useCallback, useEffect, useState } from "react";
 import {
   connectFreighter,
   retrievePublicKey,
@@ -28,6 +28,16 @@ export default function WalletProvider({
 }) {
   const [address, setAddress] = useState<string | null>(null);
   const [connected, setConnected] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const storedPublicKey = sessionStorage.getItem("walletAddress");
+    if (storedPublicKey) {
+      setAddress(shortenPublicKey(storedPublicKey));
+      setConnected(true);
+    }
+  }, []);
 
   const connect = useCallback(async () => {
     try {
