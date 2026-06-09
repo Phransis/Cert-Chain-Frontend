@@ -40,7 +40,35 @@ export default function UniversityPortal() {
   );
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
-  const { connected } = useContext(WalletContext);
+  const { connected, connect } = useContext(WalletContext);
+
+  if (!connected) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-white to-zinc-50">
+        <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="rounded-3xl border border-zinc-200 bg-white p-10 text-center shadow-sm">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100 text-2xl">
+              🔒
+            </div>
+            <h1 className="text-3xl font-semibold text-zinc-950">
+              Wallet Required
+            </h1>
+            <p className="mt-3 text-sm leading-6 text-zinc-600">
+              Connect your Stellar wallet before accessing the University
+              portal.
+            </p>
+            <button
+              type="button"
+              onClick={connect}
+              className="mt-8 inline-flex rounded-2xl bg-[var(--button-bg)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--button-bg-hover)]"
+            >
+              Connect Wallet
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-white to-zinc-50">

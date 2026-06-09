@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import FileUploadDropZone from "../components/FileUploadDropZone";
 import VerificationResult from "../components/VerificationResult";
+import { WalletContext } from "../components/WalletProvider";
 
 type VerificationStatus =
   | "verified"
@@ -12,6 +13,7 @@ type VerificationStatus =
   | null;
 
 export default function EmployerPortal() {
+  const { connected, connect } = useContext(WalletContext);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [verificationStatus, setVerificationStatus] =
     useState<VerificationStatus>(null);
@@ -21,6 +23,33 @@ export default function EmployerPortal() {
     setUploadedFile(file);
     setVerificationStatus(null);
   };
+
+  if (!connected) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-white to-zinc-50">
+        <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="rounded-3xl border border-zinc-200 bg-white p-10 text-center shadow-sm">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100 text-2xl">
+              🔒
+            </div>
+            <h1 className="text-3xl font-semibold text-zinc-950">
+              Wallet Required
+            </h1>
+            <p className="mt-3 text-sm leading-6 text-zinc-600">
+              Connect your Stellar wallet to access the Employer portal.
+            </p>
+            <button
+              type="button"
+              onClick={connect}
+              className="mt-8 inline-flex rounded-2xl bg-[var(--button-bg)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--button-bg-hover)]"
+            >
+              Connect Wallet
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   const handleVerify = async () => {
     if (!uploadedFile) return;

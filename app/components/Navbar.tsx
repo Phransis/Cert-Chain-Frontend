@@ -2,11 +2,13 @@
 
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Link from "next/link";
 import WalletConnectButton from "./WalletConnectButton";
+import { WalletContext } from "./WalletProvider";
 
 export default function Navbar() {
+  const { connected } = useContext(WalletContext);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -61,18 +63,22 @@ export default function Navbar() {
               >
                 Home
               </Link>
-              <Link
-                href="/university"
-                className="text-sm font-medium text-zinc-700 transition hover:text-[var(--button-bg)]"
-              >
-                University
-              </Link>
-              <Link
-                href="/employer"
-                className="text-sm font-medium text-zinc-700 transition hover:text-[var(--button-bg)]"
-              >
-                Employer
-              </Link>
+              {connected ? (
+                <>
+                  <Link
+                    href="/university"
+                    className="text-sm font-medium text-zinc-700 transition hover:text-[var(--button-bg)]"
+                  >
+                    University
+                  </Link>
+                  <Link
+                    href="/employer"
+                    className="text-sm font-medium text-zinc-700 transition hover:text-[var(--button-bg)]"
+                  >
+                    Employer
+                  </Link>
+                </>
+              ) : null}
               <Link
                 href="/verify"
                 className="text-sm font-medium text-zinc-700 transition hover:text-[var(--button-bg)]"
@@ -101,20 +107,24 @@ export default function Navbar() {
               >
                 Home
               </Link>
-              <Link
-                href="/university"
-                className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 hover:text-[var(--button-bg)]"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                University
-              </Link>
-              <Link
-                href="/employer"
-                className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 hover:text-[var(--button-bg)]"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Employer
-              </Link>
+              {connected ? (
+                <>
+                  <Link
+                    href="/university"
+                    className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 hover:text-[var(--button-bg)]"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    University
+                  </Link>
+                  <Link
+                    href="/employer"
+                    className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 hover:text-[var(--button-bg)]"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Employer
+                  </Link>
+                </>
+              ) : null}
               <Link
                 href="/verify"
                 className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 hover:text-[var(--button-bg)]"
