@@ -10,6 +10,7 @@ type Transaction = {
   walletAddress?: string;
   status: "Active" | "Pending" | "Revoked";
   date: string;
+  documentHash?: string;
 };
 
 type TransactionsTableProps = {
@@ -43,11 +44,13 @@ export default function TransactionsTable({
 
   const normalizeTransaction = (item: any): Transaction => {
     const status =
-      item.status === "Active" ||
-      item.status === "Pending" ||
-      item.status === "Revoked"
-        ? item.status
-        : "Pending";
+      item.status === "Active" || item.status === "ACTIVE"
+        ? "Active"
+        : item.status === "Pending" || item.status === "PENDING"
+          ? "Pending"
+          : item.status === "Revoked" || item.status === "REVOKED"
+            ? "Revoked"
+            : "Pending";
 
     return {
       studentId: item.student_id || item.studentId || item.id || "",
@@ -56,6 +59,7 @@ export default function TransactionsTable({
       status,
       date: item.date || item.created_at || item.timestamp || "",
       walletAddress: item.wallet_address || item.walletAddress || "",
+      documentHash: item.document_hash || item.documentHash || "",
     };
   };
 
@@ -163,13 +167,14 @@ export default function TransactionsTable({
               <th className="px-4 py-3 font-semibold">Status</th>
               <th className="px-4 py-3 font-semibold">Date</th>
               <th className="px-4 py-3 font-semibold">Wallet Address</th>
+              <th className="px-4 py-3 font-semibold">Document Hash</th>
             </tr>
           </thead>
           <tbody>
             {currentTransactions.length === 0 ? (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={7}
                   className="px-4 py-6 text-center text-sm text-zinc-500"
                 >
                   No transactions available.
@@ -196,6 +201,9 @@ export default function TransactionsTable({
                   </td>
                   <td className="px-4 py-3 font-mono text-zinc-700">
                     {transaction.walletAddress || "N/A"}
+                  </td>
+                  <td className="px-4 py-3 font-mono text-zinc-700">
+                    {transaction.documentHash || "N/A"}
                   </td>
                 </tr>
               ))
